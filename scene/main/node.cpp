@@ -1311,6 +1311,7 @@ Node *Node::_get_child_by_name(const StringName &p_name) const {
 	return NULL;
 }
 
+// 支持多级相对路径（包括.和..访问当前层级及父级）来获取节点
 Node *Node::get_node_or_null(const NodePath &p_path) const {
 
 	if (p_path.is_empty()) {
@@ -1412,6 +1413,7 @@ Node *Node::get_parent() const {
 	return data.parent;
 }
 
+// 查找名字匹配通配符的父级（祖先）节点
 Node *Node::find_parent(const String &p_mask) const {
 
 	Node *p = data.parent;
@@ -1425,6 +1427,7 @@ Node *Node::find_parent(const String &p_mask) const {
 	return NULL;
 }
 
+// 判断指定节点是否为父级（祖先）节点
 bool Node::is_a_parent_of(const Node *p_node) const {
 
 	ERR_FAIL_NULL_V(p_node, false);

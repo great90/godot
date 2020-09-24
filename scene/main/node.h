@@ -75,7 +75,7 @@ public:
 		bool operator()(const Node *p_a, const Node *p_b) const { return p_b->data.process_priority == p_a->data.process_priority ? p_b->is_greater_than(p_a) : p_b->data.process_priority > p_a->data.process_priority; }
 	};
 
-	static int orphan_node_count;
+	static int orphan_node_count; // 孤儿节点数量
 
 private:
 	struct GroupData {
@@ -110,7 +110,7 @@ private:
 
 		Viewport *viewport;
 
-		Map<StringName, GroupData> grouped;
+		Map<StringName, GroupData> grouped; // 已加入的分组
 		List<Node *>::Element *OW; // owned element
 		List<Node *> owned;
 
@@ -291,8 +291,11 @@ public:
 	NodePath get_path_to(const Node *p_node) const;
 	Node *find_common_parent_with(const Node *p_node) const;
 
+	// 加入某个分组，每个节点允许同时加入多个分组
 	void add_to_group(const StringName &p_identifier, bool p_persistent = false);
+	// 退出某个分组
 	void remove_from_group(const StringName &p_identifier);
+	// 获取是否已经加入某个分组
 	bool is_in_group(const StringName &p_identifier) const;
 
 	struct GroupInfo {
@@ -335,12 +338,18 @@ public:
 	void propagate_call(const StringName &p_method, const Array &p_args = Array(), const bool p_parent_first = false);
 
 	/* PROCESSING */
+	// 设置是否启用固定帧回调函数 _physics_process，该函数的回调帧率恒定
 	void set_physics_process(bool p_process);
+	// 获取当前固定帧时长
 	float get_physics_process_delta_time() const;
+	// 获取是否启用固定帧回调函数 _physics_process
 	bool is_physics_processing() const;
 
+	// 设置是否启用帧回调函数 _process，该函数的回调帧率不是恒定的
 	void set_process(bool p_idle_process);
+	// 获取当前帧时长
 	float get_process_delta_time() const;
+	// 获取是否启用帧回调函数 _process
 	bool is_processing() const;
 
 	void set_physics_process_internal(bool p_process_internal);
@@ -349,7 +358,9 @@ public:
 	void set_process_internal(bool p_idle_process_internal);
 	bool is_processing_internal() const;
 
+	// 设置帧回调函数 _process 执行优先级
 	void set_process_priority(int p_priority);
+	// 获取帧回调函数 _process 执行优先级
 	int get_process_priority() const;
 
 	void set_process_input(bool p_enable);
@@ -396,7 +407,7 @@ public:
 	String validate_child_name(Node *p_child);
 #endif
 
-	void queue_delete();
+	void queue_delete(); // 在空闲期间安全地删除节点，GDScript中绑定的名称为 queue_free
 
 	//hacks for speed
 	static void set_human_readable_collision_renaming(bool p_enabled);

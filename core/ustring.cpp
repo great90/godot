@@ -2882,20 +2882,22 @@ float String::similarity(const String &p_string) const {
 	return (2.0f * inter) / sum;
 }
 
+// 判断通配符是否匹配字符串
 static bool _wildcard_match(const CharType *p_pattern, const CharType *p_string, bool p_case_sensitive) {
 	switch (*p_pattern) {
 		case '\0':
 			return !*p_string;
-		case '*':
+		case '*': // 匹配0个及以上的任意字符
 			return _wildcard_match(p_pattern + 1, p_string, p_case_sensitive) || (*p_string && _wildcard_match(p_pattern, p_string + 1, p_case_sensitive));
-		case '?':
+		case '?': // 匹配单个非句点字符
 			return *p_string && (*p_string != '.') && _wildcard_match(p_pattern + 1, p_string + 1, p_case_sensitive);
 		default:
-
+			// 匹配相同字母（根据参数判断是否忽略大小写）
 			return (p_case_sensitive ? (*p_string == *p_pattern) : (_find_upper(*p_string) == _find_upper(*p_pattern))) && _wildcard_match(p_pattern + 1, p_string + 1, p_case_sensitive);
 	}
 }
 
+// 大小写敏感的通配符匹配
 bool String::match(const String &p_wildcard) const {
 
 	if (!p_wildcard.length() || !length())
@@ -2904,6 +2906,7 @@ bool String::match(const String &p_wildcard) const {
 	return _wildcard_match(p_wildcard.c_str(), c_str(), true);
 }
 
+// 大小写不敏感的通配符匹配
 bool String::matchn(const String &p_wildcard) const {
 
 	if (!p_wildcard.length() || !length())

@@ -115,7 +115,7 @@ private:
 	bool pause;
 	int root_lock;
 
-	Map<StringName, Group> group_map;
+	Map<StringName, Group> group_map; // 保存当前场景内的所有分组
 	bool _quit;
 	bool initialized;
 	bool input_handled;
@@ -160,9 +160,11 @@ private:
 	bool ugc_locked;
 	void _flush_ugc();
 
+	// 对组内的节点进行排序，根据参数决定是否选择按照执行 _process 的优先级进行排序
 	_FORCE_INLINE_ void _update_group_order(Group &g, bool p_use_priority = false);
 	void _update_listener();
 
+	// 以数组的形式返回某个分组内排序后的的所有节点
 	Array _get_nodes_in_group(const StringName &p_group);
 
 	Node *current_scene;
@@ -285,6 +287,7 @@ public:
 	void notify_group_flags(uint32_t p_call_flags, const StringName &p_group, int p_notification);
 	void set_group_flags(uint32_t p_call_flags, const StringName &p_group, const String &p_name, const Variant &p_value);
 
+	// 调用分组内所有节点的某个方法
 	void call_group(const StringName &p_group, const StringName &p_function, VARIANT_ARG_LIST);
 	void notify_group(const StringName &p_group, int p_notification);
 	void set_group(const StringName &p_group, const String &p_name, const Variant &p_value);
@@ -362,7 +365,9 @@ public:
 
 	void queue_delete(Object *p_object);
 
+	// 获取某个分组内排序后的所有节点
 	void get_nodes_in_group(const StringName &p_group, List<Node *> *p_list);
+	// 获取是否存在某个分组
 	bool has_group(const StringName &p_identifier) const;
 
 	void set_screen_stretch(StretchMode p_mode, StretchAspect p_aspect, const Size2 &p_minsize, real_t p_shrink = 1);

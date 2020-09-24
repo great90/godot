@@ -529,6 +529,7 @@ protected:
 	bool _set(const StringName &p_name, const Variant &p_property) { return false; };
 	bool _get(const StringName &p_name, Variant &r_property) const { return false; };
 	void _get_property_list(List<PropertyInfo> *p_list) const {};
+	// 对象收到一个通知时的回调
 	void _notification(int p_notification){};
 
 	_FORCE_INLINE_ static void (*_get_bind_methods())() {
