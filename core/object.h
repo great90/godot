@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  object.h                                                             */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -414,12 +414,13 @@ public:
 		CONNECT_REFERENCE_COUNTED = 8,
 	};
 
+	// 信号（事件）响应关联
 	struct Connection {
 
-		Object *source;
-		StringName signal;
-		Object *target;
-		StringName method;
+		Object *source;		// 产生信号的对象
+		StringName signal;	// 信号名称
+		Object *target;		// 接收信号的对象
+		StringName method;	// 信号处理方法名称
 		uint32_t flags;
 		Vector<Variant> binds;
 		bool operator<(const Connection &p_conn) const;
@@ -435,6 +436,7 @@ public:
 
 private:
 	enum {
+		// 每个对象最多可绑定到脚本的数据对象数量
 		MAX_SCRIPT_INSTANCE_BINDINGS = 8
 	};
 
@@ -473,29 +475,29 @@ private:
 		Signal() {}
 	};
 
-	HashMap<StringName, Signal> signal_map;
-	List<Connection> connections;
+	HashMap<StringName, Signal> signal_map;	// 监听此对象事件的信号处理表
+	List<Connection> connections;	// 监听的其他对象的信号处理列表
 #ifdef DEBUG_ENABLED
 	SafeRefCount _lock_index;
 #endif
-	bool _block_signals;
+	bool _block_signals;	// 屏蔽信号
 	int _predelete_ok;
-	Set<Object *> change_receptors;
-	ObjectID _instance_id;
+	Set<Object *> change_receptors;	// 当前对象发生变化时，需要通知的对象
+	ObjectID _instance_id;			// uint64_t 类型的（唯一）实例ID
 #ifdef DEBUG_ENABLED
 	std::atomic<ObjectRC *> _rc;
 #endif
 	bool _predelete();
 	void _postinitialize();
-	bool _can_translate;
-	bool _emitting;
+	bool _can_translate;	// 是否启用 tr 方法的翻译功能
+	bool _emitting;		// 是否在执行信号回调方法，用于检查是否在信号回调时直接删除该对象
 #ifdef TOOLS_ENABLED
-	bool _edited;
+	bool _edited;	// 是否被编辑（器修改）过
 	uint32_t _edited_version;
 	Set<String> editor_section_folding;
 #endif
-	ScriptInstance *script_instance;
-	RefPtr script;
+	ScriptInstance *script_instance;	// 脚本（运行时）数据实例对象，每个对象仅可挂载一个脚本
+	RefPtr script;	// 脚本（代码）对象
 	Dictionary metadata;
 	mutable StringName _class_name;
 	mutable const StringName *_class_ptr;
@@ -506,25 +508,26 @@ private:
 	Array _get_signal_list() const;
 	Array _get_signal_connection_list(const String &p_signal) const;
 	Array _get_incoming_connections() const;
-	void _set_bind(const String &p_set, const Variant &p_value);
-	Variant _get_bind(const String &p_name) const;
-	void _set_indexed_bind(const NodePath &p_name, const Variant &p_value);
-	Variant _get_indexed_bind(const NodePath &p_name) const;
+	void _set_bind(const String &p_set, const Variant &p_value);	// 绑定到脚本的 set 方法包装
+	Variant _get_bind(const String &p_name) const;	// 绑定到脚本的 get 方法包装
+	void _set_indexed_bind(const NodePath &p_name, const Variant &p_value);	// 绑定到脚本的 set_indexed 方法包装
+	Variant _get_indexed_bind(const NodePath &p_name) const;	// 绑定到脚本的 get_indexed 方法包装
 
-	void property_list_changed_notify();
+	void property_list_changed_notify(); // 绑定到脚本的用于调用 _change_notify 的方法
 
 	friend class Reference;
-	uint32_t instance_binding_count;
+	uint32_t instance_binding_count;	// 绑定到脚本的实例数据对象数
 	void *_script_instance_bindings[MAX_SCRIPT_INSTANCE_BINDINGS];
 
 protected:
-	virtual void _initialize_classv() { initialize_class(); }
-	virtual bool _setv(const StringName &p_name, const Variant &p_property) { return false; };
-	virtual bool _getv(const StringName &p_name, Variant &r_property) const { return false; };
+	virtual void _initialize_classv() { initialize_class(); }	// 类初始化的虚函数
+	virtual bool _setv(const StringName &p_name, const Variant &p_property) { return false; };	// 设置属性值的虚函数
+	virtual bool _getv(const StringName &p_name, Variant &r_property) const { return false; };	// 获取属性值的虚函数
 	virtual void _get_property_listv(List<PropertyInfo> *p_list, bool p_reversed) const {};
 	virtual void _notificationv(int p_notification, bool p_reversed){};
 
 	static String _get_category() { return ""; }
+	// 向 ClassDB 注册类时调用的用于注册类方法的函数
 	static void _bind_methods();
 	bool _set(const StringName &p_name, const Variant &p_property) { return false; };
 	bool _get(const StringName &p_name, Variant &r_property) const { return false; };
@@ -557,8 +560,8 @@ protected:
 	//Variant _call_bind(const StringName& p_name, const Variant& p_arg1 = Variant(), const Variant& p_arg2 = Variant(), const Variant& p_arg3 = Variant(), const Variant& p_arg4 = Variant());
 	//void _call_deferred_bind(const StringName& p_name, const Variant& p_arg1 = Variant(), const Variant& p_arg2 = Variant(), const Variant& p_arg3 = Variant(), const Variant& p_arg4 = Variant());
 
-	Variant _call_bind(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
-	Variant _call_deferred_bind(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
+	Variant _call_bind(const Variant **p_args, int p_argcount, Variant::CallError &r_error);	// 用于调用导出到脚本的方法的方法
+	Variant _call_deferred_bind(const Variant **p_args, int p_argcount, Variant::CallError &r_error); // 用于延迟调用导出到脚本的方法的方法
 
 	virtual const StringName *_get_class_namev() const {
 		if (!_class_name)
@@ -677,6 +680,7 @@ public:
 	bool has_method(const StringName &p_method) const;
 	void get_method_list(List<MethodInfo> *p_list) const;
 	Variant callv(const StringName &p_method, const Array &p_args);
+	// 调用当前对象的名为 p_method 的方法
 	virtual Variant call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error);
 	virtual void call_multilevel(const StringName &p_method, const Variant **p_args, int p_argcount);
 	virtual void call_multilevel_reversed(const StringName &p_method, const Variant **p_args, int p_argcount);
@@ -743,7 +747,7 @@ public:
 
 	StringName tr(const StringName &p_message) const; // translate message (internationalization)
 
-	bool _is_queued_for_deletion; // set to true by SceneTree::queue_delete()
+	bool _is_queued_for_deletion; 	// 是否在待删除队列中// set to true by SceneTree::queue_delete()
 	bool is_queued_for_deletion() const;
 
 	_FORCE_INLINE_ void set_message_translation(bool p_enable) { _can_translate = p_enable; }
@@ -786,27 +790,27 @@ class ObjectDB {
 		}
 	};
 
-	static HashMap<ObjectID, Object *> instances;
-	static HashMap<Object *, ObjectID, ObjectPtrHash> instance_checks;
+	static HashMap<ObjectID, Object *> instances;	// 所有 Object 实例对象的记录表
+	static HashMap<Object *, ObjectID, ObjectPtrHash> instance_checks;	// 用于检查对象有效性的实例表
 
-	static ObjectID instance_counter;
+	static ObjectID instance_counter;	// 递增的用于分配 Object 实例 ID 的计数器，只增不减
 	friend class Object;
 	friend void unregister_core_types();
 
-	static RWLock *rw_lock;
-	static void cleanup();
-	static ObjectID add_instance(Object *p_object);
-	static void remove_instance(Object *p_object);
+	static RWLock *rw_lock;	// 用于线程安全的读写锁
+	static void cleanup();	// 清理数据，啰嗦模式下将输出泄漏的对象信息
+	static ObjectID add_instance(Object *p_object); // 记录一个 Object 对象实例，并分配一个唯一的实例 ID 并返回
+	static void remove_instance(Object *p_object);	// 移除一个 Object 对象实例
 	friend void register_core_types();
-	static void setup();
+	static void setup(); // 初始化，创建读写锁对象
 
 public:
 	typedef void (*DebugFunc)(Object *p_obj);
 
-	static Object *get_instance(ObjectID p_instance_id);
-	static void debug_objects(DebugFunc p_func);
-	static int get_object_count();
-
+	static Object *get_instance(ObjectID p_instance_id); // 获取制定 ID 的 Object 对象实例
+	static void debug_objects(DebugFunc p_func); // 遍历所有 Object 对象实例，并作为传入的方法的参数进行调用
+	static int get_object_count();	// 获取当前所有 Object 实例的数量
+	// 检查指针指向的对象是否有效
 	_FORCE_INLINE_ static bool instance_validate(Object *p_ptr) {
 		rw_lock->read_lock();
 

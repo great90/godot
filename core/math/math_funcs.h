@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  math_funcs.h                                                         */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -300,6 +300,7 @@ public:
 		return diff < epsilon;
 	}
 
+	// 是否近似值，误差在十万分之一内
 	static _ALWAYS_INLINE_ bool is_equal_approx(real_t a, real_t b) {
 		// Check for exact equality first, required to handle "infinity" values.
 		if (a == b) {

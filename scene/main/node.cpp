@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  node.cpp                                                             */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -963,7 +963,7 @@ void Node::set_name(const String &p_name) {
 	}
 }
 
-static bool node_hrcr = false;
+static bool node_hrcr = false; // human readable collision renaming
 static SafeRefCount node_hrcr_count;
 
 void Node::init_node_hrcr() {

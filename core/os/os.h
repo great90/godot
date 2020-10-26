@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  os.h                                                                 */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -351,7 +351,7 @@ public:
 	virtual void delay_usec(uint32_t p_usec) const = 0;
 	virtual void add_frame_delay(bool p_can_draw);
 
-	virtual uint64_t get_ticks_usec() const = 0;
+	virtual uint64_t get_ticks_usec() const = 0; // 获取从系统启动经过的微妙数
 	uint32_t get_ticks_msec() const;
 	uint64_t get_splash_tick_msec() const;
 

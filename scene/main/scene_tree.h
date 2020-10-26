@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  scene_tree.h                                                         */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -75,6 +75,7 @@ class SceneTree : public MainLoop {
 public:
 	typedef void (*IdleCallback)();
 
+	// 拉伸方式
 	enum StretchMode {
 
 		STRETCH_MODE_DISABLED,
@@ -82,6 +83,7 @@ public:
 		STRETCH_MODE_VIEWPORT,
 	};
 
+	// 拉伸方向
 	enum StretchAspect {
 
 		STRETCH_ASPECT_IGNORE,
@@ -100,13 +102,13 @@ private:
 		Group() { changed = false; };
 	};
 
-	Viewport *root;
+	Viewport *root;	// Viewport 也继承自 Node
 
-	uint64_t tree_version;
+	uint64_t tree_version; // 场景树节点每次变化时增1
 	float physics_process_time;
 	float idle_process_time;
-	bool accept_quit;
-	bool quit_on_go_back;
+	bool accept_quit; // 是否在收到退出消息时执行退出
+	bool quit_on_go_back; // 是否在收到返回消息时执行退出
 
 #ifdef DEBUG_ENABLED
 	bool debug_collisions_hint;
@@ -116,8 +118,8 @@ private:
 	int root_lock;
 
 	Map<StringName, Group> group_map; // 保存当前场景内的所有分组
-	bool _quit;
-	bool initialized;
+	bool _quit;			// 是否正在退出
+	bool initialized;	// 是否已初始化
 	bool input_handled;
 
 	Size2 last_screen_size;
@@ -369,7 +371,7 @@ public:
 	void get_nodes_in_group(const StringName &p_group, List<Node *> *p_list);
 	// 获取是否存在某个分组
 	bool has_group(const StringName &p_identifier) const;
-
+	// 设置屏幕拉伸方案
 	void set_screen_stretch(StretchMode p_mode, StretchAspect p_aspect, const Size2 &p_minsize, real_t p_shrink = 1);
 
 	void set_use_font_oversampling(bool p_oversampling);

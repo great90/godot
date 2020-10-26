@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  node.h                                                               */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -192,8 +192,8 @@ private:
 #ifdef TOOLS_ENABLED
 	friend class SceneTreeEditor;
 #endif
-	static String invalid_character;
-	static bool _validate_node_name(String &p_name);
+	static String invalid_character; // 节点名称中禁止出现的字符
+	static bool _validate_node_name(String &p_name); // 验证节点名称是否合法
 
 protected:
 	void _block() { data.blocked++; }
@@ -332,9 +332,9 @@ public:
 	HashMap<NodePath, int> get_editable_instances() const;
 
 	/* NOTIFICATIONS */
-
+	// 发送通知到当前节点并递归所有子节点
 	void propagate_notification(int p_notification);
-
+	// 调用当前节点的方法并递归所有子节点
 	void propagate_call(const StringName &p_method, const Array &p_args = Array(), const bool p_parent_first = false);
 
 	/* PROCESSING */

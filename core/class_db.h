@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  class_db.h                                                           */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -91,6 +91,7 @@ static _FORCE_INLINE_ const char *D_METHOD(const char *m_name, ...) {
 
 #endif
 
+// 向 ClassDB 注册的类都只能指定一个基类，并且必须有无参构造函数（用于 create 调用）
 class ClassDB {
 public:
 	enum APIType {
@@ -113,15 +114,15 @@ public:
 	struct ClassInfo {
 
 		APIType api;
-		ClassInfo *inherits_ptr;
-		void *class_ptr;
-		HashMap<StringName, MethodBind *> method_map;
-		HashMap<StringName, int> constant_map;
-		HashMap<StringName, List<StringName> > enum_map;
-		HashMap<StringName, MethodInfo> signal_map;
-		List<PropertyInfo> property_list;
+		ClassInfo *inherits_ptr;	// 基类类信息
+		void *class_ptr;	// 用于区分类型的指针，通过获取类内定义的一个int类型静态变量的地址实现
+		HashMap<StringName, MethodBind *> method_map;	// 类方法映射表
+		HashMap<StringName, int> constant_map; // 类常量（如枚举）映射表
+		HashMap<StringName, List<StringName> > enum_map; // 类中定义的命名枚举常量映射表
+		HashMap<StringName, MethodInfo> signal_map;	// 信号处理映射表
+		List<PropertyInfo> property_list;	// 类属性（成员）列表
 #ifdef DEBUG_METHODS_ENABLED
-		List<StringName> constant_order;
+		List<StringName> constant_order;	// 类常量顺序
 		List<StringName> method_order;
 		Set<StringName> methods_in_properties;
 		List<MethodInfo> virtual_methods;
@@ -129,10 +130,10 @@ public:
 #endif
 		HashMap<StringName, PropertySetGet> property_setget;
 
-		StringName inherits;
-		StringName name;
+		StringName inherits;	// 基类名
+		StringName name;		// 类名
 		bool disabled;
-		bool exposed;
+		bool exposed;	// 是否向外（用户）暴露
 		Object *(*creation_func)();
 		ClassInfo();
 		~ClassInfo();
@@ -144,9 +145,9 @@ public:
 	}
 
 	static RWLock *lock;
-	static HashMap<StringName, ClassInfo> classes;
-	static HashMap<StringName, StringName> resource_base_extensions;
-	static HashMap<StringName, StringName> compat_classes;
+	static HashMap<StringName, ClassInfo> classes;	// 类信息表
+	static HashMap<StringName, StringName> resource_base_extensions; // 资源类型与处理类的映射表
+	static HashMap<StringName, StringName> compat_classes;	// 兼容类映射表
 
 #ifdef DEBUG_METHODS_ENABLED
 	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const MethodDefinition &method_name, const Variant **p_defs, int p_defcount);
@@ -158,8 +159,8 @@ public:
 
 	static void _add_class2(const StringName &p_class, const StringName &p_inherits);
 
-	static HashMap<StringName, HashMap<StringName, Variant> > default_values;
-	static Set<StringName> default_values_cached;
+	static HashMap<StringName, HashMap<StringName, Variant> > default_values;	// 类属性（成员变量）默认值映射表
+	static Set<StringName> default_values_cached;	// 已计算属性（成员变量）默认值缓存的类集合
 
 public:
 	// DO NOT USE THIS!!!!!! NEEDS TO BE PUBLIC BUT DO NOT USE NO MATTER WHAT!!!
@@ -176,7 +177,7 @@ public:
 		T::initialize_class();
 		ClassInfo *t = classes.getptr(T::get_class_static());
 		ERR_FAIL_COND(!t);
-		t->creation_func = &creator<T>;
+		t->creation_func = &creator<T>;	// 使用默认的创建方法
 		t->exposed = true;
 		t->class_ptr = T::get_class_ptr_static();
 		T::register_custom_data_to_otdb();
@@ -207,7 +208,7 @@ public:
 		T::initialize_class();
 		ClassInfo *t = classes.getptr(T::get_class_static());
 		ERR_FAIL_COND(!t);
-		t->creation_func = &_create_ptr_func<T>;
+		t->creation_func = &_create_ptr_func<T>;	// 使用自定义的创建方法
 		t->exposed = true;
 		t->class_ptr = T::get_class_ptr_static();
 		T::register_custom_data_to_otdb();

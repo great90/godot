@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  main.cpp                                                             */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -148,7 +148,7 @@ static int fixed_fps = -1;
 static bool print_fps = false;
 
 /* Helper methods */
-
+// 判断当前是否执行的是项目管理界面
 // Used by Mono module, should likely be registered in Engine singleton instead
 // FIXME: This is also not 100% accurate, `project_manager` is only true when it was requested,
 // but not if e.g. we fail to load and project and fallback to the manager.

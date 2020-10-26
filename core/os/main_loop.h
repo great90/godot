@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  main_loop.h                                                          */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -38,7 +38,7 @@
 class MainLoop : public Object {
 
 	GDCLASS(MainLoop, Object);
-	OBJ_CATEGORY("Main Loop");
+	OBJ_CATEGORY("Main Loop"); // 设置 category 为 "Main Loop"
 
 	Ref<Script> init_script;
 

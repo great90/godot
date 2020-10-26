@@ -1,4 +1,4 @@
-/*************************************************************************/
+﻿/*************************************************************************/
 /*  color.h                                                              */
 /*************************************************************************/
 /*                       This file is part of:                           */
@@ -86,13 +86,15 @@ struct Color {
 	void operator/=(const Color &p_color);
 	void operator/=(const real_t &rvalue);
 
+	// 是否近似颜色，各分量差异在十万分之一内
 	bool is_equal_approx(const Color &p_color) const;
 
-	void invert();
+	void invert(); // 颜色反转
 	void contrast();
-	Color inverted() const;
+	Color inverted() const; // 反色
 	Color contrasted() const;
 
+	// 线性插值
 	_FORCE_INLINE_ Color linear_interpolate(const Color &p_b, float p_t) const {
 
 		Color res = *this;
